@@ -21,9 +21,11 @@ gameRun.prototype.newTile = function(val) {
 };
 
 gameRun.prototype.setTileVal = function(tile, val) {
-    tile.setAttribute("class", `tile tile${val}`);
-    tile.setAttribute("val", val);
-    tile.innerHTML = val > 0 ? val : "";
+    if (tile) {
+        tile.setAttribute("class", `tile tile${val}`);
+        tile.setAttribute("val", val);
+        tile.innerHTML = val > 0 ? val : "";
+    }
 };
 
 gameRun.prototype.randomTile = function() {
@@ -67,7 +69,6 @@ gameRun.prototype.move = function(direction) {
                     j -= 4;
                 }
             }
-            //stop each time to wait for the result;
             break;
         // case 'down':
         case 40:
@@ -115,6 +116,7 @@ gameRun.prototype.score = function() {
     }
     return total;
 };
+
 //to determine win
 gameRun.prototype.max = function() {
     for (let i = 0, len = this.tiles.length; i < len; i++) {
@@ -141,11 +143,12 @@ gameRun.prototype.over = function() {
     }
     return true;
 };
+
 gameRun.prototype.clean = function() {
     for (let i = 0, len = this.tiles.length; i < len; i++) {
-        //clean up the tiles
         this.container.removeChild(this.tiles[i]);
     }
+    game = "";
     this.tiles = new Array(16);
 };
 
@@ -174,6 +177,9 @@ window.onkeydown = function(e) {
     keychar = String.fromCharCode(keynum);
 
     if ([38, 40, 37, 39].indexOf(keynum) > -1) {
+        if (!game) {
+            return;
+        }
         if (game.over()) {
             game.clean();
             scoreMsg.innerHTML = 0;
