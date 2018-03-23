@@ -7,7 +7,7 @@ function gameRun(container) {
 }
 
 gameRun.prototype.init = function() {
-    for (let i = 0, len = this.tiles.length; i < len; i++) {
+    for (let i = 0; i < this.tiles.length; i++) {
         let tile = this.newTile(0);
         tile.setAttribute("index", i);
         this.container.appendChild(tile);
@@ -33,12 +33,7 @@ gameRun.prototype.setTileVal = function(tile, val) {
 };
 
 gameRun.prototype.randomTile = function() {
-    let zeroTiles = [];
-    for (let i = 0; i < this.tiles.length; i++) {
-        if (this.tiles[i].getAttribute("val") === "0") {
-            zeroTiles.push(this.tiles[i]);
-        }
-    }
+    const zeroTiles = this.tiles.filter(x => x.getAttribute("val") === "0");
     const rIdx = Math.floor(Math.random() * zeroTiles.length);
     const rVal = Math.random() < 0.5 ? 2 : 4;
     this.setTileVal(zeroTiles[rIdx], rVal);
@@ -94,9 +89,6 @@ gameRun.prototype.move = function(key) {
                 this.setTileVal(this.tiles[idx], newColNum.shift());
             }
         }
-        if (changed) {
-            this.randomTile();
-        }
     } else if ([LEFT, RIGHT].includes(key)) {
         for (let row = 0; row < 4; row++) {
             let rowNum = [];
@@ -113,13 +105,15 @@ gameRun.prototype.move = function(key) {
                 this.setTileVal(this.tiles[idx], newRowNum.shift());
             }
         }
-        if (changed) {
-            this.randomTile();
-        }
     }
-    scoreMsg.innerHTML = this.score();
+    if (changed) {
+        this.randomTile();
+    }
+    scoreMsg.innerHTML = this.tiles
+        .map(x => ~~x.getAttribute("val"))
+        .reduce((a, b) => a + b);
     const checkOver = this.over();
-    const checkWin = this.win();
+    const checkWin = this.tiles.some(x => x.getAttribute("val") === WIN_SCORE);
     if (checkOver || checkWin) {
         this.clean();
         startBtn.style.display = "block";
@@ -129,58 +123,30 @@ gameRun.prototype.move = function(key) {
     }
 };
 
-gameRun.prototype.equal = function(tile1, tile2) {
-    return tile1.getAttribute("val") === tile2.getAttribute("val");
-};
-
-gameRun.prototype.score = function() {
-    let total = 0;
-    for (let i = 0; i < this.tiles.length; i++) {
-        total += parseInt(this.tiles[i].getAttribute("val"));
-    }
-    return total;
-};
-
-//to determine win
-gameRun.prototype.win = function() {
-    for (let i = 0, len = this.tiles.length; i < len; i++) {
-        if (this.tiles[i].getAttribute("val") === WIN_SCORE) {
-            return true;
-        }
-    }
-};
-
 gameRun.prototype.over = function() {
     for (let i = 0; i < this.tiles.length; i++) {
-        // exist empty
-        if (this.tiles[i].getAttribute("val") === "0") {
+        // exist empty, col check, row check
+        if (
+            this.tiles[i].getAttribute("val") === "0" ||
+            (i > 0 &&
+                this.tiles[i].getAttribute("val") ===
+                    this.tiles[i - 1].getAttribute("val")) ||
+            (i > 3 &&
+                this.tiles[i].getAttribute("val") ===
+                    this.tiles[i - 4].getAttribute("val"))
+        ) {
             return false;
-        }
-        // col
-        if (i % 4 !== 3) {
-            if (this.equal(this.tiles[i], this.tiles[i + 1])) {
-                return false;
-            }
-        }
-        // row
-        if (i < 12) {
-            if (this.equal(this.tiles[i], this.tiles[i + 4])) {
-                return false;
-            }
         }
     }
     return true;
 };
 
 gameRun.prototype.clean = function() {
-    for (let i = 0, len = this.tiles.length; i < len; i++) {
-        this.container.removeChild(this.tiles[i]);
-    }
+    this.tiles.forEach(child => this.container.removeChild(child));
     this.tiles = new Array(16);
     game = "";
 };
 
-//start
 window.onload = function() {
     board = document.getElementById("board");
     startBtn = document.getElementById("start");
@@ -193,7 +159,6 @@ window.onload = function() {
     };
 };
 
-//after initialization, each tap
 window.onkeydown = function(e) {
     //for IE, Chrome
     if (window.event) {
