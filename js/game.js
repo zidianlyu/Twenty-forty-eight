@@ -1,8 +1,9 @@
-let game, startBtn, scoreMsg, keynum;
+let board, game, startBtn, scoreMsg, keynum;
 const UP = 38;
 const DOWN = 40;
 const LEFT = 37;
 const RIGHT = 39;
+const WIN_SCORE = "2048";
 function gameRun(container) {
     this.container = container;
     this.tiles = new Array(16);
@@ -36,7 +37,7 @@ gameRun.prototype.setTileVal = function(tile, val) {
 
 gameRun.prototype.randomTile = function() {
     let zeroTiles = [];
-    for (let i = 0, len = this.tiles.length; i < len; i++) {
+    for (let i = 0; i < this.tiles.length; i++) {
         if (this.tiles[i].getAttribute("val") === "0") {
             zeroTiles.push(this.tiles[i]);
         }
@@ -79,6 +80,7 @@ gameRun.prototype.merge = function(arr, key) {
 };
 
 gameRun.prototype.move = function(key) {
+    let changed = false;
     if ([UP, DOWN].includes(key)) {
         for (let col = 0; col < 4; col++) {
             let colNum = [];
@@ -88,12 +90,15 @@ gameRun.prototype.move = function(key) {
             }
             let newColNum = this.merge(colNum, key);
             if (JSON.stringify(colNum) !== JSON.stringify(newColNum)) {
-                this.randomTile();
+                changed = true;
             }
             for (let row = 0; row < 4; row++) {
                 let idx = col + row * 4;
                 this.setTileVal(this.tiles[idx], newColNum.shift());
             }
+        }
+        if (changed) {
+            this.randomTile();
         }
     } else if ([LEFT, RIGHT].includes(key)) {
         for (let row = 0; row < 4; row++) {
@@ -104,13 +109,29 @@ gameRun.prototype.move = function(key) {
             }
             let newRowNum = this.merge(rowNum, key);
             if (JSON.stringify(rowNum) !== JSON.stringify(newRowNum)) {
-                this.randomTile();
+                changed = true;
             }
             for (let col = 0; col < 4; col++) {
                 let idx = row * 4 + col;
                 this.setTileVal(this.tiles[idx], newRowNum.shift());
             }
         }
+        if (changed) {
+            this.randomTile();
+        }
+    }
+    scoreMsg.innerHTML = this.score();
+    if (this.over()) {
+        this.clean();
+        startBtn.style.display = "block";
+        startBtn.innerHTML = "Game over, Replay?";
+        return;
+    }
+    if (this.win()) {
+        this.clean();
+        startBtn.style.display = "block";
+        startBtn.innerHTML = "You win, Replay?";
+        return;
     }
 };
 
@@ -130,7 +151,7 @@ gameRun.prototype.score = function() {
 //to determine win
 gameRun.prototype.win = function() {
     for (let i = 0, len = this.tiles.length; i < len; i++) {
-        if (this.tiles[i].getAttribute("val") === "2048") {
+        if (this.tiles[i].getAttribute("val") === WIN_SCORE) {
             return true;
         }
     }
@@ -168,12 +189,13 @@ gameRun.prototype.clean = function() {
 
 //start
 window.onload = function() {
-    let container = document.getElementById("board");
+    board = document.getElementById("board");
     startBtn = document.getElementById("start");
     scoreMsg = document.getElementById("score");
     startBtn.onclick = function() {
         this.style.display = "none";
-        game = game || new gameRun(container);
+        scoreMsg.innerHTML = 0;
+        game = game || new gameRun(board);
         game.init();
     };
 };
@@ -191,23 +213,6 @@ window.onkeydown = function(e) {
         if (!game) {
             return;
         }
-        if (game.over()) {
-            game.clean();
-            scoreMsg.innerHTML = 0;
-            startBtn.style.display = "block";
-            startBtn.innerHTML = "Game over, Replay?";
-            return;
-        }
-
-        if (game.win()) {
-            game.clean();
-            scoreMsg.innerHTML = 0;
-            startBtn.style.display = "block";
-            startBtn.innerHTML = "You win, Replay?";
-            return;
-        }
-
         game.move(keynum);
-        scoreMsg.innerHTML = game.score();
     }
 };
