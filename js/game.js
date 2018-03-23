@@ -1,3 +1,8 @@
+let game, startBtn, scoreMsg, keynum;
+const UP = 38;
+const DOWN = 40;
+const LEFT = 37;
+const RIGHT = 39;
 function gameRun(container) {
     this.container = container;
     this.tiles = new Array(16);
@@ -10,6 +15,7 @@ gameRun.prototype.init = function() {
         this.container.appendChild(tile);
         this.tiles[i] = tile;
     }
+    this.randomTile();
     this.randomTile();
     this.randomTile();
 };
@@ -35,71 +41,70 @@ gameRun.prototype.randomTile = function() {
             zeroTiles.push(this.tiles[i]);
         }
     }
-    let randomTileIdx = Math.floor(Math.random() * zeroTiles.length);
-    let rTile = zeroTiles[randomTileIdx];
+    const rIdx = Math.floor(Math.random() * zeroTiles.length);
     const rVal = Math.random() < 0.5 ? 2 : 4;
-    this.setTileVal(rTile, rVal);
+    this.setTileVal(zeroTiles[rIdx], rVal);
 };
 
-gameRun.prototype.merge = function(prevTile, currTile) {
-    let prevVal = prevTile.getAttribute("val");
-    let currVal = currTile.getAttribute("val");
-    if (currVal !== "0") {
-        if (prevVal === "0") {
-            this.setTileVal(prevTile, currVal);
-            this.setTileVal(currTile, 0);
-        } else if (prevVal === currVal) {
-            this.setTileVal(prevTile, prevVal * 2);
-            this.setTileVal(currTile, 0);
+gameRun.prototype.merge = function(arr, key) {
+    let newArr = [];
+    arr = arr.filter(x => x !== 0);
+    while (arr.length > 0) {
+        if ([UP, LEFT].includes(key)) {
+            if (arr.length > 1 && arr[1] === arr[0]) {
+                newArr.push(arr[0] * 2);
+                arr.shift();
+                arr.shift();
+                continue;
+            }
+            newArr.push(arr.shift());
+        } else if ([DOWN, RIGHT].includes(key)) {
+            if (arr.length > 1 && arr[arr.length - 1] === arr[arr.length - 2]) {
+                newArr.unshift(arr[arr.length - 1] * 2);
+                arr.pop();
+                arr.pop();
+                continue;
+            }
+            newArr.unshift(arr.pop());
         }
     }
+    while (newArr.length < 4) {
+        if ([UP, LEFT].includes(key)) {
+            newArr.push(0);
+        } else if ([DOWN, RIGHT].includes(key)) {
+            newArr.unshift(0);
+        }
+    }
+    return newArr;
 };
 
-//move by condition
-gameRun.prototype.move = function(direction) {
-    let j;
-    switch (direction) {
-        // case 'up':
-        case 38:
-            for (let i = 4; i < this.tiles.length; i++) {
-                j = i;
-                while (j >= 4) {
-                    this.merge(this.tiles[j - 4], this.tiles[j]);
-
-                    j -= 4;
-                }
+gameRun.prototype.move = function(key) {
+    if ([UP, DOWN].includes(key)) {
+        for (let col = 0; col < 4; col++) {
+            let colNum = [];
+            for (let row = 0; row < 4; row++) {
+                let idx = col + row * 4;
+                colNum.push(~~this.tiles[idx].getAttribute("val"));
             }
-            break;
-        // case 'down':
-        case 40:
-            for (let i = 11; i >= 0; i--) {
-                j = i;
-                while (j <= 11) {
-                    this.merge(this.tiles[j + 4], this.tiles[j]);
-                    j += 4;
-                }
+            let newColNum = this.merge(colNum, key);
+            for (let row = 0; row < 4; row++) {
+                let idx = col + row * 4;
+                this.setTileVal(this.tiles[idx], newColNum.shift());
             }
-            break;
-        // case 'left':
-        case 37:
-            for (let i = 1; i < this.tiles.length; i++) {
-                j = i;
-                while (j % 4 !== 0) {
-                    this.merge(this.tiles[j - 1], this.tiles[j]);
-                    j -= 1;
-                }
+        }
+    } else if ([LEFT, RIGHT].includes(key)) {
+        for (let row = 0; row < 4; row++) {
+            let rowNum = [];
+            for (let col = 0; col < 4; col++) {
+                let idx = row * 4 + col;
+                rowNum.push(~~this.tiles[idx].getAttribute("val"));
             }
-            break;
-        // case 'right':
-        case 39:
-            for (let i = 14; i >= 0; i--) {
-                j = i;
-                while (j % 4 !== 3) {
-                    this.merge(this.tiles[j + 1], this.tiles[j]);
-                    j += 1;
-                }
+            let newRowNum = this.merge(rowNum, key);
+            for (let col = 0; col < 4; col++) {
+                let idx = row * 4 + col;
+                this.setTileVal(this.tiles[idx], newRowNum.shift());
             }
-            break;
+        }
     }
     this.randomTile();
 };
@@ -118,23 +123,27 @@ gameRun.prototype.score = function() {
 };
 
 //to determine win
-gameRun.prototype.max = function() {
+gameRun.prototype.win = function() {
     for (let i = 0, len = this.tiles.length; i < len; i++) {
         if (this.tiles[i].getAttribute("val") === "2048") {
             return true;
         }
     }
 };
+
 gameRun.prototype.over = function() {
-    for (let i = 0, len = this.tiles.length; i < len; i++) {
+    for (let i = 0; i < this.tiles.length; i++) {
+        // exist empty
         if (this.tiles[i].getAttribute("val") === "0") {
             return false;
         }
+        // col
         if (i % 4 !== 3) {
             if (this.equal(this.tiles[i], this.tiles[i + 1])) {
                 return false;
             }
         }
+        // row
         if (i < 12) {
             if (this.equal(this.tiles[i], this.tiles[i + 4])) {
                 return false;
@@ -153,7 +162,6 @@ gameRun.prototype.clean = function() {
 };
 
 //start
-let game, startBtn, scoreMsg;
 window.onload = function() {
     let container = document.getElementById("board");
     startBtn = document.getElementById("start");
@@ -167,16 +175,14 @@ window.onload = function() {
 
 //after initialization, each tap
 window.onkeydown = function(e) {
-    let keynum, keychar;
     //for IE, Chrome
     if (window.event) {
         keynum = e.keyCode;
     } else if (e.which) {
         keynum = e.which;
     }
-    keychar = String.fromCharCode(keynum);
 
-    if ([38, 40, 37, 39].indexOf(keynum) > -1) {
+    if ([UP, DOWN, LEFT, RIGHT].includes(keynum)) {
         if (!game) {
             return;
         }
@@ -188,7 +194,7 @@ window.onkeydown = function(e) {
             return;
         }
 
-        if (game.max()) {
+        if (game.win()) {
             game.clean();
             scoreMsg.innerHTML = 0;
             startBtn.style.display = "block";
