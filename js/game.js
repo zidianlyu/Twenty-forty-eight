@@ -87,6 +87,9 @@ gameRun.prototype.move = function(key) {
                 colNum.push(~~this.tiles[idx].getAttribute("val"));
             }
             let newColNum = this.merge(colNum, key);
+            if (JSON.stringify(colNum) !== JSON.stringify(newColNum)) {
+                this.randomTile();
+            }
             for (let row = 0; row < 4; row++) {
                 let idx = col + row * 4;
                 this.setTileVal(this.tiles[idx], newColNum.shift());
@@ -100,13 +103,15 @@ gameRun.prototype.move = function(key) {
                 rowNum.push(~~this.tiles[idx].getAttribute("val"));
             }
             let newRowNum = this.merge(rowNum, key);
+            if (JSON.stringify(rowNum) !== JSON.stringify(newRowNum)) {
+                this.randomTile();
+            }
             for (let col = 0; col < 4; col++) {
                 let idx = row * 4 + col;
                 this.setTileVal(this.tiles[idx], newRowNum.shift());
             }
         }
     }
-    this.randomTile();
 };
 
 gameRun.prototype.equal = function(tile1, tile2) {
