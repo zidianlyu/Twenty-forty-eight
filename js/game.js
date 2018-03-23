@@ -1,8 +1,5 @@
 let board, game, startBtn, scoreMsg, keynum;
-const UP = 38;
-const DOWN = 40;
-const LEFT = 37;
-const RIGHT = 39;
+const [UP, DOWN, LEFT, RIGHT] = [38, 40, 37, 39];
 const WIN_SCORE = "2048";
 function gameRun(container) {
     this.container = container;
@@ -121,16 +118,13 @@ gameRun.prototype.move = function(key) {
         }
     }
     scoreMsg.innerHTML = this.score();
-    if (this.over()) {
+    const checkOver = this.over();
+    const checkWin = this.win();
+    if (checkOver || checkWin) {
         this.clean();
         startBtn.style.display = "block";
-        startBtn.innerHTML = "Game over, Replay?";
-        return;
-    }
-    if (this.win()) {
-        this.clean();
-        startBtn.style.display = "block";
-        startBtn.innerHTML = "You win, Replay?";
+        const msg = checkOver ? "Game Over" : "You Win";
+        startBtn.innerHTML = `${msg}, Replay?`;
         return;
     }
 };
@@ -142,8 +136,7 @@ gameRun.prototype.equal = function(tile1, tile2) {
 gameRun.prototype.score = function() {
     let total = 0;
     for (let i = 0; i < this.tiles.length; i++) {
-        let add = parseInt(this.tiles[i].getAttribute("val"));
-        total = total + add;
+        total += parseInt(this.tiles[i].getAttribute("val"));
     }
     return total;
 };
@@ -183,8 +176,8 @@ gameRun.prototype.clean = function() {
     for (let i = 0, len = this.tiles.length; i < len; i++) {
         this.container.removeChild(this.tiles[i]);
     }
-    game = "";
     this.tiles = new Array(16);
+    game = "";
 };
 
 //start
