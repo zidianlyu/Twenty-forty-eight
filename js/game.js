@@ -1,6 +1,6 @@
 let board, game, startBtn, scoreMsg, keynum;
 const [UP, DOWN, LEFT, RIGHT] = [38, 40, 37, 39];
-const WIN_SCORE = "2048";
+const WIN_SCORE = "512";
 function gameRun(container) {
     this.container = container;
     this.tiles = new Array(16);
@@ -124,18 +124,24 @@ gameRun.prototype.move = function(key) {
 };
 
 gameRun.prototype.over = function() {
-    for (let i = 0; i < this.tiles.length; i++) {
-        // exist empty, col check, row check
-        if (
-            this.tiles[i].getAttribute("val") === "0" ||
-            (i > 0 &&
-                this.tiles[i].getAttribute("val") ===
-                    this.tiles[i - 1].getAttribute("val")) ||
-            (i > 3 &&
-                this.tiles[i].getAttribute("val") ===
-                    this.tiles[i - 4].getAttribute("val"))
-        ) {
-            return false;
+    let res = [];
+    let tmp = [];
+    for (let i = 0; i < 16; i++) {
+        tmp.push(this.tiles[i].getAttribute("val"));
+        if (tmp.length === 4) {
+            res.push(tmp);
+            tmp = [];
+        }
+    }
+    for (let i = 0; i < res.length; i++) {
+        for (let j = 0; j < res[0].length; j++) {
+            if (
+                res[i][j] === "0" ||
+                (i > 0 && res[i][j] === res[i - 1][j]) ||
+                (j > 0 && res[i][j] === res[i][j - 1])
+            ) {
+                return false;
+            }
         }
     }
     return true;

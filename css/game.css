@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Nunito|Poiret+One|Josefin+Slab');
-
-/*font-family: 'Josefin Slab';*/
-
+@import url("https://fonts.googleapis.com/css?family=Nunito|Poiret+One|Josefin+Slab");
 .body {
     margin: 0;
     background-color: #4c535f;
@@ -9,8 +6,7 @@
 }
 
 .home-container {
-    font-family: 'Poiret One', cursive;
-    /*font-family: 'Nunito', cursive;*/
+    font-family: "Poiret One", cursive;
 }
 
 .home-title {
@@ -184,6 +180,7 @@
     width: 215px;
 }
 
+
 /* Standard syntax */
 
 #board {
@@ -205,6 +202,7 @@
     text-align: center;
     float: left;
     border-radius: 9px;
+    transition: all 0.3s;
 }
 
 #board div.tile0 {
@@ -214,65 +212,54 @@
 #board div.tile2 {
     color: #7c736a;
     background: #eee4da;
-    transition: all 0.3s;
 }
 
 #board div.tile4 {
     color: #7c736a;
     background: #ece0c8;
-    transition: all 0.3s;
 }
 
 #board div.tile8 {
     color: #fff7eb;
     background: #f2b179;
-    transition: all 0.3s;
 }
 
 #board div.tile16 {
     color: #fff7eb;
     background: #f59563;
-    transition: all 0.3s;
 }
 
 #board div.tile32 {
     color: #fff7eb;
     background: #f57c5f;
-    transition: all 0.3s;
 }
 
 #board div.tile64 {
     color: #fff7eb;
     background: #f65d3b;
-    transition: all 0.3s;
 }
 
 #board div.tile128 {
     color: #fff7eb;
     background: #edce71;
-    transition: all 0.3s;
 }
 
 #board div.tile256 {
     color: #fff7eb;
     background: #edcc61;
-    transition: all 0.3s;
 }
 
 #board div.tile512 {
     color: #fff7eb;
     background: #ecc850;
-    transition: all 0.3s;
 }
 
 #board div.tile1024 {
     color: #fff7eb;
     background: #edc53f;
-    transition: all 0.3s;
 }
 
 #board div.tile2048 {
     color: #fff7eb;
     background: #eec22e;
-    transition: all 0.3s;
 }
