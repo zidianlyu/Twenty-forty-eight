@@ -163,6 +163,20 @@ window.onload = function() {
         game = game || new gameRun(board);
         game.init();
     };
+    // let handGesture = new Hammer(document.getElementById("board"));
+    // handGesture.on("panup", function(e) {
+    //     debugger;
+    //     game.move(UP);
+    // });
+    // handGesture.on("pandown", function(e) {
+    //     game.move(DOWN);
+    // });
+    // handGesture.on("panleft", function(e) {
+    //     game.move(LEFT);
+    // });
+    // handGesture.on("panright", function(e) {
+    //     game.move(RIGHT);
+    // });
 };
 
 window.onkeydown = function(e) {
@@ -180,17 +194,3 @@ window.onkeydown = function(e) {
         game.move(keynum);
     }
 };
-
-var hammertime = new Hammer(document.getElementById("board"));
-hammertime.on("panup", function(ev) {
-    game.move(UP);
-});
-hammertime.on("pandown", function(ev) {
-    game.move(DOWN);
-});
-hammertime.on("panleft", function(ev) {
-    game.move(LEFT);
-});
-hammertime.on("panright", function(ev) {
-    game.move(RIGHT);
-});
