@@ -1,6 +1,6 @@
 let board, game, startBtn, scoreMsg, keynum;
 const [UP, DOWN, LEFT, RIGHT] = [38, 40, 37, 39];
-const WIN_SCORE = "512";
+const WIN_SCORE = "2048";
 function gameRun(container) {
     this.container = container;
     this.tiles = new Array(16);
