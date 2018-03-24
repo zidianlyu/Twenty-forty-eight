@@ -180,3 +180,17 @@ window.onkeydown = function(e) {
         game.move(keynum);
     }
 };
+
+var hammertime = new Hammer(document.getElementById("board"));
+hammertime.on("panup", function(ev) {
+    game.move(UP);
+});
+hammertime.on("pandown", function(ev) {
+    game.move(DOWN);
+});
+hammertime.on("panleft", function(ev) {
+    game.move(LEFT);
+});
+hammertime.on("panright", function(ev) {
+    game.move(RIGHT);
+});
