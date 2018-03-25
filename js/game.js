@@ -1,6 +1,7 @@
 let board, game, startBtn, scoreMsg, keynum;
 const [UP, DOWN, LEFT, RIGHT] = [38, 40, 37, 39];
 const WIN_SCORE = "2048";
+let PLAYER_SCORE = 0;
 function gameRun(container) {
     this.container = container;
     this.tiles = new Array(16);
@@ -36,6 +37,7 @@ gameRun.prototype.randomTile = function() {
     const zeroTiles = this.tiles.filter(x => x.getAttribute("val") === "0");
     const rIdx = Math.floor(Math.random() * zeroTiles.length);
     const rVal = Math.random() < 0.5 ? 2 : 4;
+    PLAYER_SCORE += rVal;
     this.setTileVal(zeroTiles[rIdx], rVal);
 };
 
@@ -45,6 +47,7 @@ gameRun.prototype.merge = function(arr, key) {
     while (arr.length > 0) {
         if ([UP, LEFT].includes(key)) {
             if (arr.length > 1 && arr[1] === arr[0]) {
+                PLAYER_SCORE += arr[0];
                 newArr.push(arr[0] * 2);
                 arr.shift();
                 arr.shift();
@@ -54,6 +57,7 @@ gameRun.prototype.merge = function(arr, key) {
         } else if ([DOWN, RIGHT].includes(key)) {
             if (arr.length > 1 && arr[arr.length - 1] === arr[arr.length - 2]) {
                 newArr.unshift(arr[arr.length - 1] * 2);
+                PLAYER_SCORE += arr[arr.length - 1];
                 arr.pop();
                 arr.pop();
                 continue;
@@ -109,9 +113,7 @@ gameRun.prototype.move = function(key) {
     if (changed) {
         this.randomTile();
     }
-    scoreMsg.innerHTML = this.tiles
-        .map(x => ~~x.getAttribute("val"))
-        .reduce((a, b) => a + b);
+    scoreMsg.innerHTML = PLAYER_SCORE;
     const checkOver = this.over();
     const checkWin = this.tiles.some(x => x.getAttribute("val") === WIN_SCORE);
     if (checkOver || checkWin) {
@@ -163,6 +165,22 @@ window.onload = function() {
         game = game || new gameRun(board);
         game.init();
     };
+    const handGesture = new Hammer(document.getElementById("board"));
+    handGesture.get("swipe").set({
+        direction: Hammer.DIRECTION_ALL
+    });
+    handGesture.on("swipeup", function(e) {
+        game.move(UP);
+    });
+    handGesture.on("swipedown", function(e) {
+        game.move(DOWN);
+    });
+    handGesture.on("swipeleft", function(e) {
+        game.move(LEFT);
+    });
+    handGesture.on("swiperight", function(e) {
+        game.move(RIGHT);
+    });
 };
 
 window.onkeydown = function(e) {

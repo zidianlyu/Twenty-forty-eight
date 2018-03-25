@@ -1,79 +1,65 @@
 <html>
 
-    <head>
-        <meta charset="utf-8">
-        <title>Twenty-forty-eight</title>
-        <link rel="shortcut icon" href="images/favicon.ico">
-        <link rel="stylesheet" href="css/game.css" text="text/css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    </head>
+<head>
+    <meta charset="utf-8">
+    <title>Twenty-forty-eight</title>
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="stylesheet" href="css/game.css" text="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
 
-    <body class="body">
-        <div class="home-container">
-            <div class="home-title">
-                <span>Try to get</span>
-                <label>2048</label>
-            </div>
-            <ul class="reference">
-                <label>by Zidian Lyu</label>
-                <a
-                    class="github"
-                    href="https://github.com/zidianlyu/Twenty-forty-eight"
-                >
+<body class="body">
+    <div class="home-container">
+        <div class="home-title">
+            <label>2048</label>
+            <div class="reference">
+                <span>&nbsp;by Zidian Lyu</span>
+                <a class="github" href="https://github.com/zidianlyu/Twenty-forty-eight">
                     <i class="fa fa-github"></i>
                 </a>
-                <a
-                    class="linkedin"
-                    href="https://www.linkedin.com/in/zidian-lyu-409a37109?trk=nav_responsive_tab_profile_pic"
-                >
+                <a class="linkedin" href="https://www.linkedin.com/in/zidian-lyu-409a37109?trk=nav_responsive_tab_profile_pic">
                     <i class="fa fa-linkedin-square"></i>
                 </a>
-                <div class="keyboard">
-                    <span>hit</span>
-                    <div class="keyboard-img">
-                        <img src="images/keyboard.png">
-                    </div>
-                    <span>to play</span>
-                </div>
-            </ul>
-            <ul class="rule">
-                <p class="rule-left">
-                    <span>Rule:</span>
-                    two
-                    <span>adjacent</span>
-                    same value tiles can
-                    <span>collapse</span>
-                    to a doule-value tile
-                </p>
-                <p class="rule-right">
-                    e.x.:
-                    <label>2</label>
-                    +
-                    <label>2</label>
-                    =>
-                    <label>4</label>
-                </p>
-            </ul>
-            <ul class="score-container">
-                Score:
-                <br>
-                <div id="score">0</div>
-            </ul>
-            <div class="start-container">
-                <button
-                    class="btn btn-primary"
-                    id="start"
-                >
-                    Start
-                </button>
             </div>
-            <div id="board"></div>
         </div>
-        <script
-            type="text/javascript"
-            src="js/game.js"
-        ></script>
-    </body>
+        <div class="rule">
+            <strong>RULE:</strong>
+            merge two
+            <strong>SAME</strong>
+            value tiles to&nbsp;
+            <strong>COLLAPSE</strong>
+        </div>
+        <div class="keyboard-container">
+            <div class="keyboard">
+                <strong>PLAY:&nbsp;</strong>
+                Hit&nbsp;
+                <strong>ARROW BUTTONS&nbsp;</strong>
+                or
+                <strong>&nbsp;SWIPE&nbsp;</strong>
+            </div>
+            <div class="rule-right">
+                <label>2</label>
+                &nbsp;+&nbsp;
+                <label>2</label>
+                &nbsp;=>&nbsp;
+                <label>4</label>
+            </div>
+        </div>
+        <div class="score-container">
+            Score:&nbsp;
+            <div id="score">0</div>
+        </div>
+        <div class="start-container">
+            <button class="btn btn-primary" id="start">
+                START
+            </button>
+        </div>
+        <div id="board"></div>
+    </div>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/hammer.min.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
+</body>
 
 </html>
