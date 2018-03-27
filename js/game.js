@@ -162,6 +162,7 @@ window.onload = function() {
     startBtn.onclick = function() {
         this.style.display = "none";
         scoreMsg.innerHTML = 0;
+        PLAYER_SCORE = 0;
         game = game || new gameRun(board);
         game.init();
     };
